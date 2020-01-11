@@ -1,0 +1,6 @@
+<!--pages/question_answer_card/question_answer_card.wxml-->
+
+<view class="record-box">
+  <view class="record" wx:key="this" wx:for="{{list}}"catchtap="onClickCardItem" data-index="{{index}}">{{index + 1}}</view>
+</view>
+
