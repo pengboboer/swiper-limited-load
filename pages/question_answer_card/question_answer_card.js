@@ -22,7 +22,6 @@ Page({
     let currentSwiperListItem = "swiperList[" + current + "]";
 
     prevPage.setData({
-      swiperDuration: "0",
       swiperCurrent: current,
       [currentSwiperListItem]: prevPage.data.list[index],
       swiperDuration: "250"
