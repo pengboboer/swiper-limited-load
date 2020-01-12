@@ -24,9 +24,9 @@ Page({
     prevPage.setData({
       swiperCurrent: current,
       [currentSwiperListItem]: prevPage.data.list[index],
-      swiperDuration: "250"
     })
-
+    // 如果上次的current和这次选择后算出来的current相同
+    // 相同位置手动调用添加相邻位置item的方法
     if (that.data.swiperCurrent == current) {
       prevPage.changeNextItem(current)
       prevPage.changeLastItem(current)
@@ -73,7 +73,12 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-
+     // 销毁时恢复上一页的切换动画
+     let pages = getCurrentPages();
+     let prevPage = pages[pages.length - 2];
+     prevPage.setData({
+       swiperDuration: "250",
+     })
   },
 
   /**
