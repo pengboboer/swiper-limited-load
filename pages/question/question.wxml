@@ -6,10 +6,16 @@
       <view class="page-item" wx:if="{{item.index != null}}">
         <view class="count-box">
           <text class="text-current-count" wx:if="{{item.index != null || item.index < 0}}">{{item.index + 1}}</text>
-          <text class="text-total-count" wx:if="{{item.totalCount != null && item.totalCount != 0}}">/{{item.totalCount}}</text>
+          <text class="text-total-count" wx:if="{{!item.isFirstPlaceholder && !item.isLastPlaceholder}}">/{{list.length}}</text>
         </view>
         <view class="content"> 这是第{{item.index + 1}}题</view>
+
         <button class="btn-answer-card" catchtap="onClickAnswerCard">答题卡</button>
+
+        <view class="change-question">
+          <button catchtap="onClickLast">上一题</button>
+          <button catchtap="onClickNext">下一题</button>
+        </view>
       </view>
 
     </swiper-item>

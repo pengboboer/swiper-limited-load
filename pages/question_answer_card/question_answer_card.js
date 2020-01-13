@@ -25,12 +25,11 @@ Page({
       swiperCurrent: current,
       [currentSwiperListItem]: prevPage.data.list[index],
     })
-    // 如果上次的current和这次选择后算出来的current相同
-    // 相同位置手动调用添加相邻位置item的方法
-    if (that.data.swiperCurrent == current) {
-      prevPage.changeNextItem(current)
-      prevPage.changeLastItem(current)
-    }
+
+    // 将前后的数据都改了
+    prevPage.changeNextItem(current)
+    prevPage.changeLastItem(current)
+    console.log(prevPage.data.swiperList)
 
     wx.navigateBack({
       delta: 1,
@@ -43,7 +42,6 @@ Page({
   onLoad: function (options) {
     this.setData({
       swiperListLength: parseInt(options.swiperListLength),
-      swiperCurrent: parseInt(options.swiperCurrent),
       list: app.globalData.questionList,
     })
   },

@@ -44,3 +44,10 @@
   margin-top: 100rpx;
 }
 
+.change-question{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 200rpx 0rpx 0rpx 0rpx;
+}
+

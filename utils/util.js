@@ -5,7 +5,7 @@
  * 循环衔接到末尾
  */
 var getLastSwiperChangeIndex = function (current, swiperList) {
-  return current - 1 > -1 ? current - 1 : swiperList.length - 1
+  return current > 0 ? current - 1 : swiperList.length - 1
 }
 
 /**
@@ -34,7 +34,7 @@ var getLastSwiperItem = function (current, swiperList, list) {
  * 循环衔接到首位
  */
 var getNextSwiperChangeIndex = function (current, swiperList) {
-  return current + 1 < swiperList.length ? current + 1 : 0
+  return current < swiperList.length - 1 ? current + 1 : 0
 }
 
 
@@ -74,7 +74,6 @@ var getInitSwiperList = function (list, swiperListLength, lastDoQuestionIndex) {
 
   // current的下一个
   let nextSwiperIndex = getNextSwiperChangeIndex(current, swiperList)
-
   swiperList[nextSwiperIndex] = getNextSwiperItem(current, swiperList, list)
   console.log("工具类初始化的swiperList：")
   console.log(swiperList)
