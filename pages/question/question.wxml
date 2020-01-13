@@ -6,7 +6,7 @@
       <view class="page-item" wx:if="{{item.index != null}}">
         <view class="count-box">
           <text class="text-current-count" wx:if="{{item.index != null || item.index < 0}}">{{item.index + 1}}</text>
-          <text class="text-total-count" wx:if="{{!item.isFirstPlaceholder && !item.isLastPlaceholder}}">/{{list.length}}</text>
+          <text class="text-total-count" wx:if="{{item.index != null}}">/{{list.length}}</text>
         </view>
         <view class="content"> 这是第{{item.index + 1}}题</view>
 

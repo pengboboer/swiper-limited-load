@@ -18,11 +18,8 @@ var getLastSwiperItem = function (current, swiperList, list) {
   let listNeedIndex = swiperList[current].index - 1
   console.log("上一个")
   console.log("替换的swiper下标为：" + swiperChangeIndex + "，" + "替换的list下标是：" + listNeedIndex)
-  // 替换数据
-  let swiperChangeItem = "swiperList[" + swiperChangeIndex + "]"
   // 如果要替换的下标超出了0，添加一个占位item
   let item = listNeedIndex == -1 ? { isFirstPlaceholder: true } : list[listNeedIndex]
-
   return item
 }
 
@@ -48,10 +45,8 @@ var getNextSwiperItem = function (current, swiperList, list) {
   let listNeedIndex = swiperList[current].index + 1
   console.log("下一个")
   console.log("替换的swiper下标为：" + swiperChangeIndex + "，" + "替换的list下标是：" + listNeedIndex)
-
   // 如果要替换的下标超出了list的下标，添加一个占位item
   let item = listNeedIndex == list.length ? { isLastPlaceholder: true } : list[listNeedIndex]
-
   return item
 }
 
