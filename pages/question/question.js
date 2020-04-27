@@ -18,7 +18,7 @@ Page({
     // 需要几个swiperItem, 最少值为3,如果有分页的需求，可以是10、20, 任何
     swiperListLength: 3,
 
-    list:[]
+    list: []
   },
 
 
@@ -47,9 +47,8 @@ Page({
       { index: 18 },
       { index: 19 },
     ]
-    // 上次做题的进度，比如上次做到第三题了
-    let lastDoQuestionIndex = 2
-
+    // 上次做题的进度，比如上次做到第十题了
+    let lastDoQuestionIndex = 9
     let current = lastDoQuestionIndex % that.data.swiperListLength
     that.setData({
       list: questionList,
@@ -61,80 +60,15 @@ Page({
     app.globalData.questionList = questionList
   },
 
-  swiperChange: function(e) {
-    this.hanldeSwiperData(e)
-  },
-
-  hanldeSwiperData: function (e) {
-    console.log(e)
-    var that = this;
-    let lastIndex = that.data.swiperIndex
+  swiperChange: function (e) {
+    let that = this
     let current = e.detail.current
-
-    // 如果是滑到了左边界，再弹回去
-    if (that.data.swiperList[current].isFirstPlaceholder) {
-      that.setData({
-        swiperCurrent: lastIndex
-      })
-      wx.showToast({
-        title: "已经是第一题了",
-        icon:"none"
-      })
-      return
-    }
-    // 如果滑到了右边界，弹回去，再弹个对话框
-    if (that.data.swiperList[current].isLastPlaceholder) {
-      that.setData({
-        swiperCurrent: lastIndex,
-        // todo 弹个对话框
-      })
-      wx.showModal({
-        title: "提示",
-        content: "您已经答完所有题，是否退出？",
-      })
-      return
-    }
-
-    console.log("当前swiper下标是：" + current + "，末尾下标为：" + (that.data.swiperList.length - 1) + "。"
-      + "当前list下标是" + that.data.swiperList[current].index + "，末尾下标为：" + (that.data.list.length - 1))
-
-    // 正向滑动，到下一个的时候
-    // 是正向衔接
-    let isLoopPositive = current == 0 && lastIndex == that.data.swiperList.length - 1
-    if (current - lastIndex == 1 || isLoopPositive) {
-      that.changeNextItem(current)
-    }
-
-    // 反向滑动，到上一个的时候
-    // 是反向衔接
-    var isLoopNegative = current == that.data.swiperList.length - 1 && lastIndex == 0
-    if (lastIndex - current == 1 || isLoopNegative) {
-      that.changeLastItem(current)
-    }
-  
-    // 记录滑过来的位置，此值对于下一次滑动的计算很重要
-    that.data.swiperIndex = current
+    util.changePage(that, current)
+    console.log(e)
+    console.log("change被调用了", current)
   },
 
-  changeNextItem: function (current) {
-    let that = this
-    let swiperChangeIndex = util.getNextSwiperChangeIndex(current, that.data.swiperList)
-    let swiperChangeItem = "swiperList[" + swiperChangeIndex + "]"
-    that.setData({
-      [swiperChangeItem]: util.getNextSwiperItem(current, that.data.swiperList, that.data.list)
-    })
-  },
-
-  changeLastItem: function (current) {
-    let that = this
-    let swiperChangeIndex = util.getLastSwiperChangeIndex(current, that.data.swiperList)
-    let swiperChangeItem = "swiperList[" + swiperChangeIndex + "]"
-    that.setData({
-      [swiperChangeItem]: util.getLastSwiperItem(current, that.data.swiperList, that.data.list)
-    })
-  },
-
-  onClickAnswerCard: function(e) {
+  onClickAnswerCard: function (e) {
     let that = this;
     // 跳转前将动画去除，以免点击某选项回来后切换的体验很奇怪
     that.setData({
@@ -146,9 +80,16 @@ Page({
     })
   },
 
-  onClickLast:function(e) {
+  /** 
+   * 快速切换会回到上一个item的bug就先不做处理了
+   * 造成这个情况的原因是swiper有动画，点击下一题太快，没等动画结束，会点到上一题的按钮
+   * 有这种点击按钮切换上一题下一题的一般都是在页面下面固定了一个view来实现
+   * 因为这个demo的重点不是这个，所以我这里就不处理了
+   * 如果你们真想处理这个bug，也可以搞一个标志位，延时动画秒数然后在点击事件判断 
+   * */
+  onClickLast: function (e) {
     let that = this
-    let lastIndex = that.data.swiperIndex == 0 ? that.data.swiperListLength - 1 : that.data.swiperIndex - 1
+    let lastIndex = that.data.swiperIndex == 0 ? that.data.swiperList.length - 1 : that.data.swiperIndex - 1
     that.setData({
       swiperCurrent: lastIndex
     })
@@ -168,9 +109,8 @@ Page({
   onLoad: function (options) {
     let that = this
     that.setData({
-      swiperHeight: wx.getSystemInfoSync().windowHeight
+      swiperHeight: wx.getSystemInfoSync().windowHeight,
     })
-
     that.requestQuestionInfo()
   },
 
@@ -185,7 +125,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
+
   },
 
   /**
@@ -199,7 +139,7 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-
+    app.globalData.questionList = null
   },
 
   /**

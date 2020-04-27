@@ -1,12 +1,12 @@
 // pages/question_answer_card/question_answer_card.js
+var util = require('../../utils/util.js');
 const app = getApp();
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
-
+    list: []
   },
 
   /**
@@ -17,18 +17,22 @@ Page({
     let index = e.currentTarget.dataset.index;
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
+    // 改变之前的swiper的current
+    let beforeChangeCurrent = prevPage.data.swiperCurrent
     // 进行取余，算出在swiperList的第几位
     let current = index % that.data.swiperListLength
-    let currentSwiperListItem = "swiperList[" + current + "]";
     prevPage.setData({
+      swiperList: util.getInitSwiperList(that.data.list, that.data.swiperListLength, index),
+      swiperIndex: current,
       swiperCurrent: current,
-      [currentSwiperListItem]: prevPage.data.list[index],
     })
-
-    // 将前后的数据都改了
-    prevPage.changeNextItem(current)
-    prevPage.changeLastItem(current)
-    console.log(prevPage.data.swiperList)
+    // 改变之后的current和之前的current相等，手动去调用一下swiperChange
+    // 因为之前有在swiperChange中保存答题记录的操作，发现偶现记不上
+    // 比如现在是第1题, swiperCurrent=0, 当你选择第4题, swiperCurrent还是=0, 对于swiper来说，并没有change
+    if (current == beforeChangeCurrent) {
+      let e = {detail: {current: current}}
+      prevPage.swiperChange(e)
+    }
 
     wx.navigateBack({
       delta: 1,
@@ -70,12 +74,12 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-     // 销毁时恢复上一页的切换动画
-     let pages = getCurrentPages();
-     let prevPage = pages[pages.length - 2];
-     prevPage.setData({
-       swiperDuration: "250",
-     })
+    // 销毁时恢复上一页的切换动画
+    let pages = getCurrentPages();
+    let prevPage = pages[pages.length - 2];
+    prevPage.setData({
+      swiperDuration: "250",
+    })
   },
 
   /**
