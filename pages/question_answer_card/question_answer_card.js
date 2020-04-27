@@ -20,7 +20,6 @@ Page({
     // 进行取余，算出在swiperList的第几位
     let current = index % that.data.swiperListLength
     let currentSwiperListItem = "swiperList[" + current + "]";
-
     prevPage.setData({
       swiperCurrent: current,
       [currentSwiperListItem]: prevPage.data.list[index],
