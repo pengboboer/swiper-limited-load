@@ -14,11 +14,13 @@ Page({
    */
   onClickCardItem: function (e) {
     let that = this;
-    let index = e.currentTarget.dataset.index;
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
     // 改变之前的swiper的current
     let beforeChangeCurrent = prevPage.data.swiperCurrent
+    let beforeChangeIndex = prevPage.data.swiperList[beforeChangeCurrent].index
+
+    let index = e.currentTarget.dataset.index;
     // 进行取余，算出在swiperList的第几位
     let current = index % that.data.swiperListLength
     prevPage.setData({
@@ -26,10 +28,11 @@ Page({
       swiperIndex: current,
       swiperCurrent: current,
     })
-    // 改变之后的current和之前的current相等，手动去调用一下swiperChange
+    // 改变之后的current和改变之前的current相等，index不同，就手动去调用一下swiperChange
+    // 如果还是原来的那一项，不去调用swiperChange
     // 因为之前有在swiperChange中保存答题记录的操作，发现偶现记不上
     // 比如现在是第1题, swiperCurrent=0, 当你选择第4题, swiperCurrent还是=0, 对于swiper来说，并没有change
-    if (current == beforeChangeCurrent) {
+    if (current == beforeChangeCurrent && index != beforeChangeIndex) {
       let e = {detail: {current: current}}
       prevPage.swiperChange(e)
     }
