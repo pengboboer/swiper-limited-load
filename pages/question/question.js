@@ -64,8 +64,6 @@ Page({
     let that = this
     let current = e.detail.current
     util.changePage(that, current)
-    console.log(e)
-    console.log("change被调用了", current)
   },
 
   onClickAnswerCard: function (e) {

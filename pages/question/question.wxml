@@ -1,7 +1,7 @@
 <!--pages/question/question.wxml-->
 <view class="main">
   <swiper style="height:{{swiperHeight}}px" duration="{{swiperDuration}}" current="{{swiperCurrent}}" bindchange="swiperChange" circular>
-    <swiper-item wx:key="this" wx:for="{{swiperList}}">
+    <swiper-item wx:key="ssssss" wx:for="{{swiperList}}">
       <view class="page-item" wx:if="{{item.index != null}}">
         <view class="count-box">
           <text class="text-current-count" wx:if="{{item.index != null || item.index < 0}}">{{item.index + 1}}</text>
