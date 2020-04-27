@@ -78,13 +78,6 @@ Page({
     })
   },
 
-  /** 
-   * 快速切换会回到上一个item的bug就先不做处理了
-   * 造成这个情况的原因是swiper有动画，点击下一题太快，没等动画结束，会点到上一题的按钮
-   * 有这种点击按钮切换上一题下一题的一般都是在页面下面固定了一个view来实现
-   * 因为这个demo的重点不是这个，所以我这里就不处理了
-   * 如果你们真想处理这个bug，也可以搞一个标志位，延时动画秒数然后在点击事件判断 
-   * */
   onClickLast: function (e) {
     let that = this
     let lastIndex = that.data.swiperIndex == 0 ? that.data.swiperList.length - 1 : that.data.swiperIndex - 1
