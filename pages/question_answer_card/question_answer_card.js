@@ -22,9 +22,9 @@ Page({
 
     let index = e.currentTarget.dataset.index;
     // 进行取余，算出在swiperList的第几位
-    let current = index % that.data.swiperListLength
+    let current = index % prevPage.data.swiperListLength
     prevPage.setData({
-      swiperList: util.getInitSwiperList(that.data.list, that.data.swiperListLength, index),
+      swiperList: util.getInitSwiperList(prevPage.data.list, prevPage.data.swiperListLength, index),
       swiperIndex: current,
       swiperCurrent: current,
     })
@@ -47,7 +47,6 @@ Page({
    */
   onLoad: function (options) {
     this.setData({
-      swiperListLength: parseInt(options.swiperListLength),
       list: app.globalData.questionList,
     })
   },

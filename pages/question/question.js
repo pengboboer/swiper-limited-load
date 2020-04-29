@@ -72,9 +72,9 @@ Page({
     that.setData({
       swiperDuration: "0"
     })
-    // 需要swiperListLength计算点击后的current
+    
     wx.navigateTo({
-      url: '../../pages/question_answer_card/question_answer_card?swiperListLength=' + that.data.swiperListLength,
+      url: '../../pages/question_answer_card/question_answer_card'
     })
   },
 
