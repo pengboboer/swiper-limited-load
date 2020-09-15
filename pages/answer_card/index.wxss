@@ -1,0 +1,32 @@
+/* pages/answer_card/index.wxss */
+
+.main{
+  widows: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.record-box{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 720rpx;
+  margin: 0rpx 15rpx 0rpx 15rpx;
+}
+
+.record{
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-width: 2rpx;
+  border-style: solid;
+  border-radius: 42rpx;
+  background-color:#cfd4d8;
+  color: #ffffff;
+  margin: 25rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}

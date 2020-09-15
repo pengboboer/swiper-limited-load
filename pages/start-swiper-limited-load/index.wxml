@@ -1,0 +1,20 @@
+<!--pages/start/index.wxml-->
+
+  <swiper-limited-load 
+    id="swiper"
+    generic:item-view="item-view"
+    swiperHeight="{{swiperHeight}}"
+    swiperDuration="{{swiperDuration}}"
+    list="{{list}}"
+    current="{{current}}"
+    bindchange="swiperChange">
+  </swiper-limited-load>
+
+  <view class="change-question">
+    <button catchtap="onClickLast">上一题</button>
+    <button catchtap="onClickNext">下一题</button>
+  </view>
+
+  <view class="answer-card">
+    <button class="btn-answer-card" catchtap="onClickAnswerCard">答题卡</button>  
+  </view>

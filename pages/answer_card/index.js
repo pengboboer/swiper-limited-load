@@ -1,22 +1,25 @@
-// pages/index/index.js
+// pages/answer_card/index.js
+const app = getApp();
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
-
+    list: []
   },
 
-  onClickOne (e) {
-    wx.navigateTo({
-      url: '../../pages/start-swiper/index',
+  /**
+   * 点击答题卡的某一项
+   */
+  onClickCardItem: function (e) {
+    let pages = getCurrentPages();
+    let prevPage = pages[pages.length - 2];
+    prevPage.setData({
+      current: e.currentTarget.dataset.index,
+      currentIndex: e.currentTarget.dataset.index
     })
-  },
-
-  onClickTwo (e) {
-    wx.navigateTo({
-      url: '../../pages/start-swiper-limited-load/index',
+    wx.navigateBack({
+      delta: 1,
     })
   },
 
@@ -24,7 +27,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.setData({
+      list: app.globalData.questionList,
+    })
   },
 
   /**
@@ -52,7 +57,12 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-
+    // 销毁时恢复上一页的切换动画
+    let pages = getCurrentPages();
+    let prevPage = pages[pages.length - 2];
+    prevPage.setData({
+      swiperDuration: "250",
+    })
   },
 
   /**

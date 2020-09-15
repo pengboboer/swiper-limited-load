@@ -1,9 +1,9 @@
 {
   "pages": [
-    "pages/question/question",
-    "pages/question_answer_card/question_answer_card",
     "pages/index/index",
-    "pages/logs/logs"
+    "pages/start-swiper/index",
+    "pages/start-swiper-limited-load/index",
+    "pages/answer_card/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

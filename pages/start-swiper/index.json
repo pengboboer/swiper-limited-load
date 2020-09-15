@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "item-view": "../../pages/start-swiper-limited-load/item/item-index"
+  }
+}

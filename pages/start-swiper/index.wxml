@@ -1,0 +1,16 @@
+<!--pages/start-swiper/index.wxml-->
+
+<swiper style="height:{{swiperHeight}}px" duration="{{swiperDuration}}" current="{{current}}" bindchange="swiperChange">
+  <swiper-item wx:key="ssssss" wx:for="{{list}}">
+    <item-view item="{{item}}" index="{{index}}" swiperHeight="{{swiperHeight}}"></item-view>
+  </swiper-item>
+</swiper>
+
+<view class="change-question">
+  <button catchtap="onClickLast">上一题</button>
+  <button catchtap="onClickNext">下一题</button>
+</view>
+
+<view class="answer-card">
+  <button class="btn-answer-card" catchtap="onClickAnswerCard">答题卡</button>  
+</view>

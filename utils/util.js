@@ -28,6 +28,7 @@ var getInitSwiperList = function (list, swiperListLength, lastDoQuestionIndex) {
  */
 var changePage = function (that, current) {
   let lastIndex = that.data.swiperIndex
+  console.log("啊")
   // 如果是滑到了左边界，再弹回去
   if (that.data.swiperList[current].isFirstPlaceholder) {
     that.setData({
@@ -87,8 +88,6 @@ var getLastSwiperChangeIndex = function (current, swiperList) {
  * 获取上一个要替换的list中的item
  */
 var getLastSwiperItem = function (current, swiperList, list) {
-  // swiperList所需要替换的index
-  let swiperChangeIndex = getLastSwiperChangeIndex(current, swiperList)
   // list中我们需要的那个item的index
   let listNeedIndex = swiperList[current].index - 1
   // 如果要替换的下标超出了0，添加一个占位item
@@ -112,8 +111,6 @@ var getNextSwiperChangeIndex = function (current, swiperList) {
  * 获取下一个要替换的list中的item
  */
 var getNextSwiperItem = function (current, swiperList, list) {
-  // swiperList所需要替换的index
-  let swiperChangeIndex = getNextSwiperChangeIndex(current, swiperList)
   // list中我们需要的那个item的index
   let listNeedIndex = swiperList[current].index + 1
   // 如果要替换的下标超出了list的下标，添加一个占位item

@@ -1,0 +1,39 @@
+/* pages/start/item/item-index.wxss */
+.page-item{
+  display: flex;
+  flex-direction: column
+}
+
+.count-box{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 30rpx;
+}
+
+.text-current-count{
+  font-size: 40rpx;
+  color: #00c6c4;
+  font-weight: bold;
+}
+
+.text-total-count{
+  font-size: 30rpx;
+  color:#999999;
+  font-weight: bold;
+}
+
+.content{
+  font-size: 80rpx;
+  align-self: center;
+  margin-top: 80rpx
+}
+
+
+
+.img{
+  width: 690rpx;
+  margin: 80rpx 0rpx 0rpx 30rpx;
+  border-radius: 10rpx;
+}
