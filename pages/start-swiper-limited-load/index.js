@@ -28,9 +28,11 @@ Page({
     that.setData({
       list: questionList
     })
+
     // 暂时全局记一下list, 答题卡页直接用了
     app.globalData.questionList = questionList
 
+    // 假设初始是第二题
     let defaultIndex = 1
     that.setData({
       currentIndex: defaultIndex

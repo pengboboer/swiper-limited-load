@@ -20,7 +20,6 @@ Component({
       // 那么不会走swiperChange的change方法，需要我们手动去给它加一个current，然后传出去
       if (current == swiperIndex) {
         that.triggerEvent("change", {source: "",current: index})
-        console.log("手动改")
       }
     }
   },
