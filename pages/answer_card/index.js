@@ -15,8 +15,7 @@ Page({
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
     prevPage.setData({
-      current: e.currentTarget.dataset.index,
-      currentIndex: e.currentTarget.dataset.index
+      current: e.currentTarget.dataset.index
     })
     wx.navigateBack({
       delta: 1,

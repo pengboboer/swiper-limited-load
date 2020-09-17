@@ -25,23 +25,22 @@ Page({
       questionList.push(item)
     }
 
+    // 初始化重要的是这三步:
     that.setData({
       list: questionList
     })
-
-    // 暂时全局记一下list, 答题卡页直接用了
-    app.globalData.questionList = questionList
-
     // 假设初始是第二题
-    let defaultIndex = 1
     that.setData({
-      currentIndex: defaultIndex
+      current: 1
     })
-    that.selectComponent('#swiper').init(defaultIndex)
     // 初始化后再把动画弄出来，否则初始的current不是0，界面会自动跳动到当前位置，体验不太好
     that.setData({
       swiperDuration: '250'
     })
+
+   
+     // 全局记一下list, 答题卡页暂时就直接用了
+     app.globalData.questionList = questionList
   },
 
   swiperChange (e) {
@@ -69,7 +68,7 @@ Page({
   },
 
   onClickAnswerCard: function (e) {
-    let that = this;
+    let that = this
     // 因为某一项不一定是在当前项的左侧还是右侧
     // 跳转前将动画去除，以免点击某选项回来后切换的体验很奇怪
     that.setData({

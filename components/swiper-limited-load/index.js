@@ -9,18 +9,23 @@ Component({
       let that = this
       let current = index % SWIPER_LENGTH
       let {swiperIndex, swiperList} = that.data
+      if (swiperList.length == 0) {
+        return
+      }
       // 如果change后还是之前的那一个item，直接return
       if (current == swiperIndex && swiperList[swiperIndex].index == index) {
         return 
       }
-
       that.init(index)
-
       // 如果change之后还是当前的current，比如之前是1、点击后是4  之前是2、点击后是5之类
       // 那么不会走swiperChange的change方法，需要我们手动去给它加一个current，然后传出去
       if (current == swiperIndex) {
         that.triggerEvent("change", {source: "",current: index})
       }
+    },
+
+    'list': function(list) {
+      this.init(this.data.swiperIndex)
     }
   },
   /**
@@ -56,7 +61,7 @@ Component({
     // 值为0禁止切换动画
     swiperDuration: "250",
     // 当前swiper渲染的items
-    swiperList: [{},{},{}],
+    swiperList: [],
 
     list: [],
   },
@@ -68,9 +73,12 @@ Component({
     
     init (defaulaIndex) {
       let that = this
+      let list = that.data.list
+      if (list == null || list.length == 0) {
+        return
+      }
       // 默认显示的index
       let current = defaulaIndex % SWIPER_LENGTH
-      let list = that.data.list
       that.setData({
         swiperList: that.getInitSwiperList(list, defaulaIndex),
         swiperIndex: current,
@@ -141,9 +149,6 @@ Component({
      */
     getInitSwiperList : function (list, defaultIndex) {
       let that = this
-      if (list == null || list.length == 0) {
-        return
-      }
       let swiperList = []
       for (let i = 0; i < 3; i++) {
         swiperList.push({})
