@@ -12,8 +12,9 @@
 # 使用方法<br>
 * 将components中的swiper-limited-load复制到您的项目中<br>
 * 在需要的页面引用此组件，并且创建自己的自定义组件item-view<br>
-* 在初始化数据时，为你的list的每一项指定index属性，并调用swiper-limited-load的init方法<br>
-* 说明：其它属性和swiper无异，你们可以自己单独添加你们需要的属性，具体可以参照项目目录start-swiper-limited-load中的用法<br>
+* 在初始化数据时，为你的list的每一项指定index属性<br>
+* 具体可以参照项目目录start-swiper-limited-load中的用法<br>
+* 说明：其它属性和swiper无异，你们可以自己单独添加你们需要的属性<br>
 
 [csdn原文：微信小程序答题页实现——swiper渲染优化](https://blog.csdn.net/pengbo6665631/article/details/103955422)<br>
 ### 如果对你有帮助，动动小手给个star,谢谢。
