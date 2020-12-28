@@ -1,15 +1,15 @@
 # swiper-limited-load
 ## 一个答题小程序Demo, 包含做题页和答题卡页
 ### 示例动图
-<img src="/img/shili.gif" width = "250" height = "555"/>
+<img src="https://img-blog.csdnimg.cn/20200918102227499.gif" width = "250" height = "555"/>
 这里实现了如下功能和细节：<br>
 * 保证swiper-item的数量固定，加载大量数据时，大大优化渲染效率<br>
 * 记录上次的位置，页面初次加载不一定非得是第一页，可以是任何页<br>
 * 答题卡选择某一index回来以后的数据替换，并去掉swiper切换动画，提升交互体验<br><br>
 
-<img src="/img/1.jpeg" width = "250" height = "555"/>   <img src="/img/2.jpeg" width = "250" height = "555" /><br><br>
+<img src="https://img-blog.csdnimg.cn/20200916142812474.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BlbmdibzY2NjU2MzE=,size_16,color_FFFFFF,t_70" width = "250" height = "555"/>   <img src="https://img-blog.csdnimg.cn/20200916142842196.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BlbmdibzY2NjU2MzE=,size_16,color_FFFFFF,t_70" width = "250" height = "555" /><br><br>
 #### 当加载300个item时，微信自带的swiper需要渲染将近4秒。而swiper-limited-load只加载3个item，渲染很快<br><br>
-<img src="/img/3.jpeg" width = "250" height = "555"/>   <img src="/img/4.jpeg" width = "250" height = "555" />
+<img src="https://img-blog.csdnimg.cn/20201228150032890.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BlbmdibzY2NjU2MzE=,size_16,color_FFFFFF,t_70" width = "250" height = "555"/>   <img src="https://img-blog.csdnimg.cn/2020122815013697.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BlbmdibzY2NjU2MzE=,size_16,color_FFFFFF,t_70" width = "250" height = "555" />
 
 # 使用方法<br>
 * 将components中的swiper-limited-load复制到您的项目中<br>
