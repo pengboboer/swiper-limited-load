@@ -24,9 +24,6 @@ Component({
       }
     },
 
-    'list': function(list) {
-      this.init(this.data.swiperIndex)
-    }
   },
   /**
    * 组件的属性列表
@@ -154,11 +151,17 @@ Component({
         swiperList.push({})
       }
       let current = defaultIndex % 3
-      let currentItem = list[defaultIndex]
+      let realIndex = list.findIndex(function(item){
+        return item.index == defaultIndex
+      })
+      let currentItem = list[realIndex]
+
       swiperList[current] = currentItem
       swiperList[that.getLastSwiperChangeIndex(current)] = that.getLastSwiperNeedItem(currentItem, list)
       swiperList[that.getNextSwiperChangeIndex(current)] = that.getNextSwiperNeedItem(currentItem, list)
-      // console.log(swiperList)
+      console.log("初始化")
+      console.log(defaultIndex)
+      console.log(swiperList)
       return swiperList;
     },
     /**
@@ -178,7 +181,10 @@ Component({
      */
     getLastSwiperNeedItem : function (currentItem, list) {
       let listNeedIndex = currentItem.index - 1
-      let item = listNeedIndex == -1 ? { isFirstPlaceholder: true } : list[listNeedIndex]
+      let realIndex = list.findIndex(function(item){
+        return item.index == listNeedIndex
+      })
+      let item = listNeedIndex == -1 ? { isFirstPlaceholder: true } : list[realIndex]
       return item
     },
     /**
@@ -186,7 +192,10 @@ Component({
      */
     getNextSwiperNeedItem : function (currentItem, list) {
       let listNeedIndex = currentItem.index + 1
-      let item = listNeedIndex == list.length ? { isLastPlaceholder: true } : list[listNeedIndex]
+      let realIndex = list.findIndex(function(item){
+        return item.index == listNeedIndex
+      })
+      let item = listNeedIndex == list.length ? { isLastPlaceholder: true } : list[realIndex]
       return item
     }
     

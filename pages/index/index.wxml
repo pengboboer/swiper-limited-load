@@ -1,8 +1,8 @@
 <!--pages/index/index.wxml-->
 <view class="main">
-  <button class="btn" style="width: 650rpx" catchtap="onClickOne">微信自带swiper</button>
+  <button class="btn" style="width: 720rpx" catchtap="onClickOne">微信自带swiper</button>
   <view style="height: 40rpx"></view>
-  <button class="btn" style="width: 650rpx" catchtap="onClickTwo">swiper-limited-load</button>
+  <button class="btn" style="width: 720rpx" catchtap="onClickTwo">swiper-limited-load</button>
   <view style="height: 40rpx"></view>
-  <button class="btn" style="width: 650rpx" catchtap="onClickThree">swiper-limited-load-paging</button>
+  <button class="btn" style="width: 720rpx" catchtap="onClickThree">swiper-limited-load-paging</button>
 </view>

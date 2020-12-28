@@ -29,10 +29,11 @@ Page({
     that.setData({
       list: questionList
     })
+    that.selectComponent('#swiper').init(0);
     // 假设初始是第二题
-    that.setData({
-      current: 1
-    })
+    // that.setData({
+    //   current: 1
+    // })
     // 初始化后再把动画弄出来，否则初始的current不是0，界面会自动跳动到当前位置，体验不太好
     that.setData({
       swiperDuration: '250'

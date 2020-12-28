@@ -1,6 +1,8 @@
 // pages/start/index.js
-var utils = require('../start-swiper-limited-load-paging/utils.js');
-const app = getApp();
+var Utils = require('../start-swiper-limited-load-paging/utils.js')
+const app = getApp()
+const NO_PREV_PAGE = -1
+const NO_NEXT_PAGE = -2
 
 Page({
 
@@ -11,44 +13,43 @@ Page({
     list: [],
     current: 0,
     currentIndex: 0,
-    swiperDuration: "0",
+    swiperDuration: "250",
 
     currentPage: 1,
-    pageSize: 5,
+    pageSize: 10,
+    requesting: false
   },
 
   requestListInfo () {
     let that = this
-    utils.request({
+    that.data.requesting = true
+    Utils.request({
       pageNum: that.data.currentPage, 
       size: that.data.pageSize, 
       onSuccess: function(info){
-      console.log(info)
-      info.questionList.map(function(item, index){
-        item.index = index + (that.data.currentPage - 1) * that.data.pageSize
-        item.total = info.total
-        return item;
-      })
-      that.setData({
-        list: that.data.list.concat(info.questionList)
-      })
-      if (that.data.currentPage == 1) {
-        // 假设初始是第二题
-        that.setData({
-          current: 0
-        })
-        // 初始化后再把动画弄出来，否则初始的current不是0，界面会自动跳动到当前位置，体验不太好
-        that.setData({
-          swiperDuration: '250'
-        })
-
-        that.selectComponent("#swiper").init(1)
-      } else {
-        that.selectComponent("#swiper").init(that.data.current)
+        that.data.requesting = false
+        that.handleData(info)
+      },
+      onFailed: function(msg) {
+        that.data.requesting = false
       }
-      // 全局记一下list, 答题卡页暂时就直接用了
-      app.globalData.questionList = that.data.list
-    }})
+    })
+  },
+
+  handleData (info) {
+    let that = this
+    console.log(info)
+    info.questionList.map(function(item, index){
+      item.index = index + (that.data.currentPage - 1) * that.data.pageSize
+      item.total = info.total
+      return item;
+    })
+    that.setData({
+      list: that.data.list.concat(info.questionList)
+    })
+
+    that.selectComponent("#swiper").init(that.data.currentIndex)
+    Utils.initAnswerCardList(info.total)
   },
 
   swiperChange (e) {
@@ -58,23 +59,36 @@ Page({
     that.setData({
       currentIndex: current
     })
-    if (current == -1) {
-      wx.showToast({
-        title: "已经是第一题了",
-        icon: "none"
-      })
-      return
+
+    if (current == NO_PREV_PAGE || current == NO_NEXT_PAGE) {
+      console.log(that.data.requesting)
+      if (that.data.requesting) {
+        wx.showToast({
+          title: "数据加载中",
+          icon: "none"
+        })
+        return
+      } 
+
+      if (current == NO_PREV_PAGE) {
+        wx.showToast({
+          title: "已经是第一题了",
+          icon: "none"
+        })
+        return
+      }
+
+      if (current == NO_NEXT_PAGE) {
+        wx.showModal({
+          title: "提示",
+          content: "您已经答完所有题，是否退出？",
+        })
+        return
+      }
+      
     }
 
-    if (current == -2) {
-      wx.showModal({
-        title: "提示",
-        content: "您已经答完所有题，是否退出？",
-      })
-      return
-    }
-
-    if (that.data.list.length - 1 == current) {
+    if (that.data.list.length - 1 == current && !that.data.requesting) {
       that.data.currentPage++
       that.requestListInfo()
     }
@@ -117,9 +131,16 @@ Page({
    */
   onLoad: function (options) {
     let that = this
+    // 默认值为defautIndex，比如上次答到了第几题
+    let index = parseInt(options.defaultIndex)
+    let currentPage = Utils.getInitcurrentPage(index, that.data.pageSize)
+
     that.setData({
       swiperHeight: wx.getSystemInfoSync().windowHeight,
+      currentIndex: parseInt(options.defaultIndex),
+      currentPage: currentPage
     })
+
     that.requestListInfo()
   },
 
