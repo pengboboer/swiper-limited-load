@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/start-swiper/index",
     "pages/start-swiper-limited-load/index",
-    "pages/answer_card/index"
+    "pages/answer_card/index",
+    "pages/start-swiper-limited-load-paging/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

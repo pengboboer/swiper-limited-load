@@ -1,0 +1,20 @@
+/* pages/start/index.wxss */
+
+.change-question{
+  width: 750rpx;
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.answer-card{
+  width: 750rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+  margin-bottom: calc(120rpx + env(safe-area-inset-bottom));
+}
