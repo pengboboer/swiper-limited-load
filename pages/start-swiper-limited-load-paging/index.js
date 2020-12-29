@@ -1,6 +1,5 @@
 // pages/start/index.js
 var Utils = require('../start-swiper-limited-load-paging/utils.js')
-const app = getApp()
 const NO_PREV_PAGE = -1
 const NO_NEXT_PAGE = -2
 
@@ -17,7 +16,8 @@ Page({
 
     currentPage: 1,
     pageSize: 10,
-    total: 300,
+    
+    total: 0,
     requesting: false
   },
 
@@ -31,24 +31,12 @@ Page({
       size: that.data.pageSize, 
       onSuccess: function(info){
         that.data.requesting = false
-        that.handleData(info)
+        that.handleRequestInfo(info.questionList)
       },
       onFailed: function(msg) {
         that.data.requesting = false
       }
     })
-  },
-
-  handleData (info) {
-    let that = this
-    console.log(info)
-   
-    that.setData({
-      list: that.data.list.concat(info.questionList)
-    })
-
-    that.selectComponent("#swiper").init(that.data.currentIndex)
-    Utils.initAnswerCardList(info.total)
   },
 
   swiperChange (e) {
@@ -88,12 +76,15 @@ Page({
     }
 
     let list = that.data.list
-    if (current == list[0].index && !that.data.requesting) {
-      that.data.currentPage = list[0].index - 1
+
+    if (current == list[0].index && current != 0 && !that.data.requesting) {
+      console.log("okl")
+      that.data.currentPage = list[0].currentPage - 1
       that.requestListInfo()
     }
-
-    if (current == list[list.length - 1].index && !that.data.requesting) {
+    console.log(current)
+    console.log(list[list.length - 1].index)
+    if (current == list[list.length - 1].index && current != (this.data.total - 1) && !that.data.requesting) {
       that.data.currentPage = list[list.length - 1].currentPage + 1
       that.requestListInfo()
     }
@@ -138,12 +129,18 @@ Page({
     let that = this
     // 默认值为defautIndex，比如上次答到了第几题
     let index = parseInt(options.defaultIndex)
+    // 根据index和size计算得出数据在第几页
     let currentPage = Utils.getInitcurrentPage(index, that.data.pageSize)
+    // 列表总长度，一定要在第一次请求列表数据前明确该值
+    let total = 30
+    // 初始化答题卡列表
+    Utils.initAnswerCardList(total)
 
     that.setData({
       swiperHeight: wx.getSystemInfoSync().windowHeight,
       currentIndex: parseInt(options.defaultIndex),
-      currentPage: currentPage
+      currentPage: currentPage,
+      total: total
     })
 
     that.initRequestInfo()
@@ -152,6 +149,9 @@ Page({
   initRequestInfo() {
     let that = this
     let {currentIndex, pageSize, currentPage, total} = that.data
+    // 不确定我们需要请求几个列表，可能是1个，也可能是2个
+    // 比如一页10条，我们上次答题答到了第10题，正好在这个临界点上，我们还需要第11道题的数据
+    // 那么我们需要一起请求第一页和第二页的数据
     Utils.requestMulti({
       pageList: Utils.getInitPageList(currentIndex, pageSize, currentPage, total),
       size: pageSize,
@@ -167,25 +167,24 @@ Page({
   handleRequestInfo(list) {
     let that = this
     let currentList = that.data.list
+    if (list == null || list.length == 0) return 
+    
     if (currentList == null || currentList.length == 0) {
-      this.setData({
+      that.setData({
         list: list
       })
       that.selectComponent("#swiper").init(that.data.currentIndex)
       return 
     }
-    // 需要往前插入
-    if (list[0].currentPage < currentList[0].currentPage) {
-      this.setData({
-        list: currentList.splice(0, 1, list)
-      })
-    // 往后添加
-    } else {
-      this.setData({
-        list: currentList.concat(list)
-      })
-    }
 
+    if (list[0].currentPage == currentList[0].currentPage) return
+
+    // 看是需要将新的list往前插还是往后插
+    let results = list[0].currentPage < currentList[0].currentPage ? 
+                  list.concat(currentList) : currentList.concat(list)
+    that.setData({
+      list: results
+    })
     that.selectComponent("#swiper").init(that.data.currentIndex)
   },
 

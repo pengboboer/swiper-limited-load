@@ -11,7 +11,7 @@
 function request({currentPage, size, onSuccess, onFailed}) {
   setTimeout(function(){
     let data = {}
-    data.total = 300
+    data.total = 30
     data.currentPage = currentPage
     let questionList = []
     for (let i = 0; i < size; i++) {
@@ -51,7 +51,6 @@ function requestMulti({pageList, size, onSuccess, onFailed}) {
     console.log(list)
     onSuccess(list)
   }).catch(function(err){
-    console.log(err)
     onFailed(err)
   })
 }

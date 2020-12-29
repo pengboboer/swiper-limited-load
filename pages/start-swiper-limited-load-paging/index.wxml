@@ -7,6 +7,7 @@
     swiperDuration="{{swiperDuration}}"
     list="{{list}}"
     current="{{current}}"
+    total="{{total}}"
     bindchange="swiperChange"
     isPagingMode>
   </swiper-limited-load>

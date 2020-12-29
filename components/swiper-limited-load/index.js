@@ -44,6 +44,10 @@ Component({
     swiperDuration: {
       type: String,
       value: "250"
+    },
+    total: {
+      type: Number,
+      value: 0
     }
   },
 
@@ -195,7 +199,9 @@ Component({
       let realIndex = list.findIndex(function(item){
         return item.index == listNeedIndex
       })
-      let item = listNeedIndex == list.length ? { isLastPlaceholder: true } : list[realIndex]
+      let total = this.data.total != 0 ? this.data.total : list.length
+      console.log("total", total)
+      let item = listNeedIndex == total ? { isLastPlaceholder: true } : list[realIndex]
       return item
     }
     
