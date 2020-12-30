@@ -10,34 +10,18 @@ Page({
    */
   data: {
     list: [],
+    // 缓存某一页数据的map
     cachePageDataMap: null,
+    // 改变此值可控制swiper的位置
     current: 0,
+    // 仅仅记录swiper的位置
     currentIndex: 0,
     swiperDuration: "250",
 
     currentPage: 1,
     pageSize: 10,
-    
     total: 0,
     requesting: false
-  },
-
-
-
-  requestListInfo () {
-    let that = this
-    that.data.requesting = true
-    Utils.request({
-      currentPage: that.data.currentPage, 
-      size: that.data.pageSize, 
-      onSuccess: function(info){
-        that.data.requesting = false
-        that.handleRequestInfo(info.questionList)
-      },
-      onFailed: function(msg) {
-        that.data.requesting = false
-      }
-    })
   },
 
   swiperChange (e) {
@@ -49,7 +33,6 @@ Page({
     })
 
     if (current == NO_PREV_PAGE || current == NO_NEXT_PAGE) {
-      console.log(that.data.requesting)
       if (that.data.requesting) {
         wx.showToast({
           title: "数据加载中",
@@ -73,23 +56,81 @@ Page({
         })
         return
       }
-      
     }
 
-    let list = that.data.list
+    this.loadMore(current)
+  },
 
-    if (current == list[0].index && current != 0 && !that.data.requesting) {
-      console.log("okl")
-      that.data.currentPage = list[0].currentPage - 1
-      that.requestListInfo()
+  loadMore(current) {
+    let list = this.data.list
+    if (this.data.requesting) return
+    // 是加载上一页
+    if (current == list[0].index && current != 0) {
+      this.judgeLoadWay(list[0].currentPage - 1)
     }
-    console.log(current)
-    console.log(list[list.length - 1].index)
-    if (current == list[list.length - 1].index && current != (this.data.total - 1) && !that.data.requesting) {
-      that.data.currentPage = list[list.length - 1].currentPage + 1
-      that.requestListInfo()
+    // 是加载下一页
+    if (current == list[list.length - 1].index && current != this.data.total - 1) {
+      this.judgeLoadWay(list[list.length - 1].currentPage + 1)
     }
   },
+
+  judgeLoadWay(currentPage) {
+    let cachePageDataMap = this.data.cachePageDataMap
+    if (cachePageDataMap.has(currentPage)) {
+      this.loadCacheOnePageInfo(currentPage)
+      return 
+    } 
+
+    this.requestOnePageInfo(currentPage)
+  },
+
+  requestOnePageInfo (currentPage) {
+    let that = this
+    that.data.requesting = true
+    Utils.request({
+      currentPage: currentPage, 
+      size: that.data.pageSize, 
+      onSuccess: function(info){
+        that.data.requesting = false
+        that.handleOnePageInfo(info.questionList)
+      },
+      onFailed: function(msg) {
+        that.data.requesting = false
+      }
+    })
+  },
+
+  loadCacheOnePageInfo (currentPage) {
+    let list = this.data.cachePageDataMap.get(currentPage)
+    this.handleOnePageInfo(list)
+  },
+
+  handleOnePageInfo (list) {
+    let that = this
+    let currentList = that.data.list
+    if (list == null || list.length == 0) return 
+ 
+    if (currentList == null || currentList.length == 0) {
+      that.setData({
+        list: list
+      })
+      that.selectComponent("#swiper").init(that.data.currentIndex)
+      return 
+    }
+
+    if (list[0].currentPage == currentList[0].currentPage) return
+
+    // 看是需要将新的list往前插还是往后插
+    let finalList = list[0].currentPage < currentList[0].currentPage ? 
+                  list.concat(currentList) : currentList.concat(list)
+    that.setData({
+      list: finalList
+    })
+    that.selectComponent("#swiper").init(that.data.currentIndex)
+  },
+
+
+
 
   onClickAnswerCard: function (e) {
     let that = this
@@ -101,6 +142,7 @@ Page({
     wx.navigateTo({
       url: '../../pages/answer_card/index'
     })
+    console.log(that.data.cachePageDataMap)
   },
 
   onClickLast: function (e) {
@@ -129,7 +171,7 @@ Page({
   onLoad: function (options) {
     let that = this
     // 列表总长度，一定要在第一次请求列表数据前明确该值
-    let total = 30
+    let total = Utils.TOTAL
     // 初始化答题卡列表
     Utils.initAnswerCardList(total)
     that.setData({
@@ -140,10 +182,10 @@ Page({
 
     // 默认值为defautIndex，比如上次答到了第几题
     let index = parseInt(options.defaultIndex)
-    that.initRequestInfo(index)
+    that.refresh(index)
   },
 
-  initRequestInfo(currentIndex) {
+  refresh(currentIndex) {
     let that = this
     // 根据index和size计算得出数据在第几页
     let currentPage = Utils.getInitcurrentPage(currentIndex, that.data.pageSize)
@@ -156,49 +198,70 @@ Page({
     // 不确定我们需要请求几个列表，可能是1个，也可能是2个
     // 比如一页10条，我们上次答题答到了第10题，正好在这个临界点上，我们还需要第11道题的数据
     // 那么我们需要一起请求第一页和第二页的数据
+    let pageList = Utils.getInitPageList(currentIndex, pageSize, currentPage, total)
+    that.judgeInitWay(pageList)
+  },
+
+  judgeInitWay(pageList) {
+    let cachePageDataMap = this.data.cachePageDataMap
+    let isNeedRequestNet = false;
+    pageList.forEach(function(item){
+      if (!cachePageDataMap.has(item)) {
+        isNeedRequestNet = true
+      }
+    })
+
+    if (!isNeedRequestNet) {
+      this.loadCacheInitPageInfo(pageList)
+      return 
+    } 
+
+    this.requestInitPageInfo(pageList)
+  },
+
+  requestInitPageInfo (pageList) {
+    let that = this
+    that.data.requesting = true
     Utils.requestMulti({
-      pageList: Utils.getInitPageList(currentIndex, pageSize, currentPage, total),
-      size: pageSize,
-      onSuccess: function(list, results){
-        that.handleRequestInfo(list, results)
+      pageList: pageList,
+      size: that.data.pageSize,
+      onSuccess: function(results){
+        that.data.requesting = false
+        that.handleInitInfo(results)
       },
       onFailed: function(msg){
-
+        that.data.requesting = false
       }
     })
   },
 
-  handleRequestInfo(list, results) {
+  loadCacheInitPageInfo (pageList) {
     let that = this
-    let currentList = that.data.list
-    if (list == null || list.length == 0) return 
-
-    if (results) {
-      results.forEach(function(item){
-        that.data.cachePageDataMap.set(item.currentPage, item.questionList)
-      })
-      console.log("hash",that.data.cachePageDataMap)
-    }
+    let results = []
+    pageList.forEach(function(item){
+      let info = {}
+      info.currentPage = item
+      info.questionList = that.data.cachePageDataMap.get(item)
+      results.push(info)
+    })
     
-    if (currentList == null || currentList.length == 0) {
-      that.setData({
-        list: list
-      })
-      that.selectComponent("#swiper").init(that.data.currentIndex)
-      return 
-    }
+    that.handleInitInfo(results)
+  },
 
-    if (list[0].currentPage == currentList[0].currentPage) return
-
-    // 看是需要将新的list往前插还是往后插
-    let finalList = list[0].currentPage < currentList[0].currentPage ? 
-                  list.concat(currentList) : currentList.concat(list)
+  handleInitInfo (results) {
+    let that = this
+    let list = []
+    results.forEach(function(resultItem, index){
+      that.data.cachePageDataMap.set(resultItem.currentPage, resultItem.questionList)
+      list = list.concat(resultItem.questionList)
+    })
     that.setData({
-      list: finalList
+      list: list
     })
     that.selectComponent("#swiper").init(that.data.currentIndex)
   },
 
+  
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

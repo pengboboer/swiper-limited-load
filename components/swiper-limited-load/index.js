@@ -2,6 +2,8 @@
 const START = 0
 const END = 2
 const SWIPER_LENGTH = 3
+const NO_PREV_PAGE = -1
+const NO_NEXT_PAGE = -2
 
 Component({
   observers: {
@@ -9,7 +11,7 @@ Component({
       let that = this
       let current = index % SWIPER_LENGTH
       let {swiperIndex, swiperList} = that.data
-      if (swiperList.length == 0) {
+      if (swiperList.length == 0 || swiperList[swiperIndex] == null) {
         return
       }
       // 如果change后还是之前的那一个item，直接return
@@ -96,36 +98,25 @@ Component({
 
     swiperChange: function (e) {
       let that = this
-      
       let current = e.detail.current
       let lastIndex = that.data.swiperIndex
       let currentItem = that.data.swiperList[current]
-
       let info = {}
       info.source = e.detail.source
-      // 如果是滑到了左边界，弹回去
-      if (currentItem.isFirstPlaceholder) {
-        info.current = -1
-        that.triggerEvent("change", info)
-        that.setData({
-          swiperCurrent: lastIndex
-        })
-        return
-      }
-      // 如果滑到了右边界，弹回去
-      if (currentItem.isLastPlaceholder) {
-        info.current = -2
-        that.triggerEvent("change", info)
-        that.setData({
-          swiperCurrent: lastIndex
-        })
-        return
-      }
-
+     
       // 正向滑动，到下一个的时候
       // 是正向衔接
       let isLoopPositive = current == START && lastIndex == END
       if (current - lastIndex == 1 || isLoopPositive) {
+        // 如果是滑到了左边界或者下一个还未有值，弹回去
+        if (currentItem == null) {
+          info.current = NO_NEXT_PAGE
+          that.triggerEvent("change", info)
+          that.setData({
+            swiperCurrent: lastIndex
+          })
+          return
+        }
         let swiperChangeItem = "swiperList[" + that.getNextSwiperChangeIndex(current) + "]"
         that.setData({
           [swiperChangeItem]: that.getNextSwiperNeedItem(currentItem, that.data.list)
@@ -136,12 +127,22 @@ Component({
       // 是反向衔接
       var isLoopNegative = current == END && lastIndex == START
       if (lastIndex - current == 1 || isLoopNegative) {
+        // 如果滑到了右边界或者上一个还未有值，弹回去
+        if (currentItem == null) {
+          info.current = NO_PREV_PAGE
+          that.triggerEvent("change", info)
+          that.setData({
+            swiperCurrent: lastIndex
+          })
+          return
+        }
         let swiperChangeItem = "swiperList[" + that.getLastSwiperChangeIndex(current) + "]"
         that.setData({
           [swiperChangeItem]: that.getLastSwiperNeedItem(currentItem, that.data.list)
         })
       }
 
+      if (currentItem == null) return 
       info.current = currentItem.index
       that.triggerEvent("change", info)
       // 记录滑过来的位置，此值对于下一次滑动的计算很重要
@@ -190,24 +191,25 @@ Component({
      * 获取上一个要替换的list中的item
      */
     getLastSwiperNeedItem : function (currentItem, list) {
+      if (currentItem == null) return null;
       let listNeedIndex = currentItem.index - 1
       let realIndex = list.findIndex(function(item){
         return item.index == listNeedIndex
       })
-      let item = listNeedIndex == -1 ? { isFirstPlaceholder: true } : list[realIndex]
+      let item = listNeedIndex == -1 ? null : list[realIndex]
       return item
     },
     /**
      * 获取下一个要替换的list中的item
      */
     getNextSwiperNeedItem : function (currentItem, list) {
+      if (currentItem == null) return null;
       let listNeedIndex = currentItem.index + 1
       let realIndex = list.findIndex(function(item){
         return item.index == listNeedIndex
       })
       let total = this.data.total != 0 ? this.data.total : list.length
-      console.log("total", total)
-      let item = listNeedIndex == total ? { isLastPlaceholder: true } : list[realIndex]
+      let item = listNeedIndex == total ? null : list[realIndex]
       return item
     }
     

@@ -5,13 +5,14 @@
 // 	"list": []
 // }
 
+var TOTAL = 100
 
 
 // 模拟网络请求一页数据
 function request({currentPage, size, onSuccess, onFailed}) {
   setTimeout(function(){
     let data = {}
-    data.total = 30
+    data.total = TOTAL
     data.currentPage = currentPage
     let questionList = []
     for (let i = 0; i < size; i++) {
@@ -24,7 +25,7 @@ function request({currentPage, size, onSuccess, onFailed}) {
     }
     data.questionList = questionList
     onSuccess(data)
-  },1500)
+  },1000)
 }
 
 // 同时请求多页数据
@@ -48,12 +49,8 @@ function requestMulti({pageList, size, onSuccess, onFailed}) {
       })
   }))
   promise.then(function(results){
-    let list = []
-    results.forEach(function(resultItem, index){
-      list = list.concat(resultItem.questionList)
-    })
     wx.hideLoading()
-    onSuccess(list, results)
+    onSuccess(results)
   }).catch(function(err){
     wx.hideLoading()
     onFailed(err)
@@ -93,6 +90,7 @@ function initAnswerCardList (total) {
 }
 
 module.exports = {
+  TOTAL:TOTAL,
   request: request,
   requestMulti: requestMulti,
   getInitcurrentPage: getInitcurrentPage,

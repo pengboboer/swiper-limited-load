@@ -24,12 +24,9 @@ Page({
     }
 
     if (prevPage.route == "pages/start-swiper-limited-load-paging/index") {
-      prevPage.setData({
-        list: []
-      })
       prevPage.selectComponent("#swiper").clear()
       let index  = e.currentTarget.dataset.index
-      prevPage.initRequestInfo(index)
+      prevPage.refresh(index)
     }
 
     wx.navigateBack({
