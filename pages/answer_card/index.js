@@ -16,9 +16,22 @@ Page({
   onClickCardItem: function (e) {
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
-    prevPage.setData({
-      current: e.currentTarget.dataset.index
-    })
+    console.log(prevPage)
+    if (prevPage.route == "pages/start-swiper-limited-load/index") {
+      prevPage.setData({
+        current: e.currentTarget.dataset.index
+      })
+    }
+
+    if (prevPage.route == "pages/start-swiper-limited-load-paging/index") {
+      prevPage.setData({
+        list: []
+      })
+      prevPage.selectComponent("#swiper").clear()
+      let index  = e.currentTarget.dataset.index
+      prevPage.initRequestInfo(index)
+    }
+
     wx.navigateBack({
       delta: 1,
     })
@@ -60,10 +73,13 @@ Page({
   onUnload: function () {
     // 销毁时恢复上一页的切换动画
     let pages = getCurrentPages();
-    let prevPage = pages[pages.length - 2];
-    prevPage.setData({
-      swiperDuration: "250",
-    })
+    setTimeout(function(){
+      let prevPage = pages[pages.length - 2];
+      prevPage.setData({
+        swiperDuration: "250",
+      })
+    }, 1000)
+   
   },
 
   /**

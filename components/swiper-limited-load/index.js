@@ -87,6 +87,12 @@ Component({
       })
     },
 
+    clear () {
+      this.setData({
+        list: [],
+        swiperList: []
+      })
+    },
 
     swiperChange: function (e) {
       let that = this

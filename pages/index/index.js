@@ -22,7 +22,7 @@ Page({
 
   onClickThree (e) {
     wx.navigateTo({
-      url: '../../pages/start-swiper-limited-load-paging/index?defaultIndex=24',
+      url: '../../pages/start-swiper-limited-load-paging/index?defaultIndex=9',
     })
   },
 

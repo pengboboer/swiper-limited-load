@@ -10,6 +10,7 @@ Page({
    */
   data: {
     list: [],
+    cachePageDataMap: null,
     current: 0,
     currentIndex: 0,
     swiperDuration: "250",
@@ -114,7 +115,7 @@ Page({
 
   onClickNext: function (e) {
     let that = this
-    if (that.data.currentIndex + 1 > that.data.list.length - 1) {
+    if (that.data.currentIndex + 1 > that.data.total - 1) {
       return 
     }
     that.setData({
@@ -127,36 +128,39 @@ Page({
    */
   onLoad: function (options) {
     let that = this
-    // 默认值为defautIndex，比如上次答到了第几题
-    let index = parseInt(options.defaultIndex)
-    // 根据index和size计算得出数据在第几页
-    let currentPage = Utils.getInitcurrentPage(index, that.data.pageSize)
     // 列表总长度，一定要在第一次请求列表数据前明确该值
     let total = 30
     // 初始化答题卡列表
     Utils.initAnswerCardList(total)
-
     that.setData({
       swiperHeight: wx.getSystemInfoSync().windowHeight,
-      currentIndex: parseInt(options.defaultIndex),
-      currentPage: currentPage,
-      total: total
+      total: total,
+      cachePageDataMap: new Map()
     })
 
-    that.initRequestInfo()
+    // 默认值为defautIndex，比如上次答到了第几题
+    let index = parseInt(options.defaultIndex)
+    that.initRequestInfo(index)
   },
 
-  initRequestInfo() {
+  initRequestInfo(currentIndex) {
     let that = this
-    let {currentIndex, pageSize, currentPage, total} = that.data
+    // 根据index和size计算得出数据在第几页
+    let currentPage = Utils.getInitcurrentPage(currentIndex, that.data.pageSize)
+    that.setData({
+      currentIndex: currentIndex,
+      currentPage: currentPage,
+    })
+    
+    let {pageSize, total} = that.data
     // 不确定我们需要请求几个列表，可能是1个，也可能是2个
     // 比如一页10条，我们上次答题答到了第10题，正好在这个临界点上，我们还需要第11道题的数据
     // 那么我们需要一起请求第一页和第二页的数据
     Utils.requestMulti({
       pageList: Utils.getInitPageList(currentIndex, pageSize, currentPage, total),
       size: pageSize,
-      onSuccess: function(list){
-        that.handleRequestInfo(list)
+      onSuccess: function(list, results){
+        that.handleRequestInfo(list, results)
       },
       onFailed: function(msg){
 
@@ -164,10 +168,17 @@ Page({
     })
   },
 
-  handleRequestInfo(list) {
+  handleRequestInfo(list, results) {
     let that = this
     let currentList = that.data.list
     if (list == null || list.length == 0) return 
+
+    if (results) {
+      results.forEach(function(item){
+        that.data.cachePageDataMap.set(item.currentPage, item.questionList)
+      })
+      console.log("hash",that.data.cachePageDataMap)
+    }
     
     if (currentList == null || currentList.length == 0) {
       that.setData({
@@ -180,10 +191,10 @@ Page({
     if (list[0].currentPage == currentList[0].currentPage) return
 
     // 看是需要将新的list往前插还是往后插
-    let results = list[0].currentPage < currentList[0].currentPage ? 
+    let finalList = list[0].currentPage < currentList[0].currentPage ? 
                   list.concat(currentList) : currentList.concat(list)
     that.setData({
-      list: results
+      list: finalList
     })
     that.selectComponent("#swiper").init(that.data.currentIndex)
   },

@@ -24,11 +24,15 @@ function request({currentPage, size, onSuccess, onFailed}) {
     }
     data.questionList = questionList
     onSuccess(data)
-  },100)
+  },1500)
 }
 
 // 同时请求多页数据
 function requestMulti({pageList, size, onSuccess, onFailed}) {
+  console.log(pageList)
+  wx.showLoading({
+    title: '加载中',
+  })
   let promise = Promise.all(pageList.map(function(pageNum) {
       return new Promise(function(resolve, reject){
         request({
@@ -45,12 +49,13 @@ function requestMulti({pageList, size, onSuccess, onFailed}) {
   }))
   promise.then(function(results){
     let list = []
-    results.forEach(function(resultItem){
+    results.forEach(function(resultItem, index){
       list = list.concat(resultItem.questionList)
     })
-    console.log(list)
-    onSuccess(list)
+    wx.hideLoading()
+    onSuccess(list, results)
   }).catch(function(err){
+    wx.hideLoading()
     onFailed(err)
   })
 }
@@ -65,18 +70,16 @@ var getInitcurrentPage = function(index, size) {
 
 // 获取初始请求网络的pageList
 var getInitPageList = function(currentIndex, size, currentPage, total) {
-  let pageList = []
   // 需要请求此页和上一页的数据
   if ((currentIndex + 1) % size == 1 && currentIndex != 0) {
-    pageList = [currentPage - 1, currentPage]
+    return [currentPage - 1, currentPage]
   }
   // 需要请求此页和下一页的数据
   if ((currentIndex + 1) % size == 0 && currentIndex != (total - 1)) {
-    pageList = [currentPage, currentPage + 1]
+    return [currentPage, currentPage + 1]
   }
   // 请求一页即可
-  pageList = [currentPage]
-  return pageList
+  return [currentPage]
 }
 
 function initAnswerCardList (total) {
