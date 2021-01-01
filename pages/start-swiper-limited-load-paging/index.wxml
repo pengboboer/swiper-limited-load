@@ -8,8 +8,7 @@
     list="{{list}}"
     current="{{current}}"
     total="{{total}}"
-    bindchange="swiperChange"
-    isPagingMode>
+    bindchange="swiperChange">
   </swiper-limited-load>
 
   <view class="change-question">

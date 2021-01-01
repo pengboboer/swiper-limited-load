@@ -11,7 +11,7 @@ Component({
       let that = this
       let current = index % SWIPER_LENGTH
       let {swiperIndex, swiperList} = that.data
-      if (swiperList.length == 0 || swiperList[swiperIndex] == null) {
+      if (swiperList.length == 0 || swiperList[current] == null) {
         return
       }
       // 如果change后还是之前的那一个item，直接return
@@ -43,10 +43,12 @@ Component({
       type: Number,
       value: 0
     },
+    // 值为0禁止切换动画
     swiperDuration: {
       type: String,
       value: "250"
     },
+    // 分页需要传此数据
     total: {
       type: Number,
       value: 0
@@ -61,12 +63,8 @@ Component({
     swiperIndex: 0,
     // 此值控制swiper的位置
     swiperCurrent: 0,
-    // 值为0禁止切换动画
-    swiperDuration: "250",
     // 当前swiper渲染的items
     swiperList: [],
-
-    list: [],
   },
 
   /**
@@ -149,30 +147,21 @@ Component({
       that.data.swiperIndex = current
     },
 
-
-
-
         /**
      * 获取初始化的swiperList
      */
     getInitSwiperList : function (list, defaultIndex) {
       let that = this
-      let swiperList = []
-      for (let i = 0; i < 3; i++) {
-        swiperList.push({})
-      }
-      let current = defaultIndex % 3
+      let current = defaultIndex % SWIPER_LENGTH
       let realIndex = list.findIndex(function(item){
         return item.index == defaultIndex
       })
       let currentItem = list[realIndex]
-
+      let swiperList = []
       swiperList[current] = currentItem
       swiperList[that.getLastSwiperChangeIndex(current)] = that.getLastSwiperNeedItem(currentItem, list)
       swiperList[that.getNextSwiperChangeIndex(current)] = that.getNextSwiperNeedItem(currentItem, list)
-      console.log("初始化")
-      console.log(defaultIndex)
-      console.log(swiperList)
+      console.log("初始化swiperList",swiperList)
       return swiperList;
     },
     /**
@@ -196,6 +185,7 @@ Component({
       let realIndex = list.findIndex(function(item){
         return item.index == listNeedIndex
       })
+      if (realIndex == -1) return null
       let item = listNeedIndex == -1 ? null : list[realIndex]
       return item
     },
@@ -208,6 +198,7 @@ Component({
       let realIndex = list.findIndex(function(item){
         return item.index == listNeedIndex
       })
+      if (realIndex == -1) return null
       let total = this.data.total != 0 ? this.data.total : list.length
       let item = listNeedIndex == total ? null : list[realIndex]
       return item

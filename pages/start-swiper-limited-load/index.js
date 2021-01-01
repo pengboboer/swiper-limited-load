@@ -1,4 +1,6 @@
 // pages/start/index.js
+const NO_PREV_PAGE = -1
+const NO_NEXT_PAGE = -2
 const app = getApp();
 
 Page({
@@ -25,21 +27,18 @@ Page({
       questionList.push(item)
     }
 
-    // 初始化重要的是这三步:
+    // 初始化需要三步
+    // 初始化setData后，需要调用swiper组件的init方法
     that.setData({
       list: questionList
     })
-    that.selectComponent('#swiper').init(0);
-    // 假设初始是第二题
-    // that.setData({
-    //   current: 1
-    // })
+    // 比如上次答到了第20题
+    that.selectComponent('#swiper').init(19);
     // 初始化后再把动画弄出来，否则初始的current不是0，界面会自动跳动到当前位置，体验不太好
     that.setData({
       swiperDuration: '250'
     })
 
-   
      // 全局记一下list, 答题卡页暂时就直接用了
      app.globalData.questionList = questionList
   },
@@ -51,7 +50,7 @@ Page({
     that.setData({
       currentIndex: current
     })
-    if (current == -1) {
+    if (current == NO_PREV_PAGE) {
       wx.showToast({
         title: "已经是第一题了",
         icon: "none"
@@ -59,7 +58,7 @@ Page({
       return
     }
 
-    if (current == -2) {
+    if (current == NO_NEXT_PAGE) {
       wx.showModal({
         title: "提示",
         content: "您已经答完所有题，是否退出？",

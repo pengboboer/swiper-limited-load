@@ -6,6 +6,7 @@
 // }
 
 var TOTAL = 100
+var NET_DELAY_TIME = 1000
 
 
 // 模拟网络请求一页数据
@@ -25,12 +26,12 @@ function request({currentPage, size, onSuccess, onFailed}) {
     }
     data.questionList = questionList
     onSuccess(data)
-  },1000)
+  }, NET_DELAY_TIME)
 }
 
 // 同时请求多页数据
 function requestMulti({pageList, size, onSuccess, onFailed}) {
-  console.log(pageList)
+  console.log("请求哪几页数据？",pageList)
   wx.showLoading({
     title: '加载中',
   })
@@ -65,17 +66,14 @@ var getInitcurrentPage = function(index, size) {
 }
 
 
-// 获取初始请求网络的pageList
+// 获取初始的pageList, 可能一页，可能两页
 var getInitPageList = function(currentIndex, size, currentPage, total) {
-  // 需要请求此页和上一页的数据
   if ((currentIndex + 1) % size == 1 && currentIndex != 0) {
     return [currentPage - 1, currentPage]
   }
-  // 需要请求此页和下一页的数据
   if ((currentIndex + 1) % size == 0 && currentIndex != (total - 1)) {
     return [currentPage, currentPage + 1]
   }
-  // 请求一页即可
   return [currentPage]
 }
 

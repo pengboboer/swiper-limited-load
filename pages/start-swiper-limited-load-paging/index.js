@@ -10,7 +10,7 @@ Page({
    */
   data: {
     list: [],
-    // 缓存某一页数据的map
+    // key为currentPage，value为此页list数据
     cachePageDataMap: null,
     // 改变此值可控制swiper的位置
     current: 0,
@@ -63,28 +63,34 @@ Page({
 
   loadMore(current) {
     let list = this.data.list
-    if (this.data.requesting) return
+    if (this.data.requesting || current == 0 || current == this.data.total - 1) return
     // 是加载上一页
-    if (current == list[0].index && current != 0) {
-      this.judgeLoadWay(list[0].currentPage - 1)
+    if (current == list[0].index) {
+      this.judgeLoadWay(list[0].currentPage - 1, current)
     }
     // 是加载下一页
-    if (current == list[list.length - 1].index && current != this.data.total - 1) {
-      this.judgeLoadWay(list[list.length - 1].currentPage + 1)
+    if (current == list[list.length - 1].index) {
+      this.judgeLoadWay(list[list.length - 1].currentPage + 1, current)
     }
   },
 
-  judgeLoadWay(currentPage) {
+  judgeLoadWay(currentPage, currentIndex) {
     let cachePageDataMap = this.data.cachePageDataMap
+    console.log(this.data.cachePageDataMap)
     if (cachePageDataMap.has(currentPage)) {
-      this.loadCacheOnePageInfo(currentPage)
+      this.loadCacheOnePageInfo(currentPage, currentIndex)
       return 
     } 
 
-    this.requestOnePageInfo(currentPage)
+    this.requestOnePageInfo(currentPage, currentIndex)
   },
 
-  requestOnePageInfo (currentPage) {
+  loadCacheOnePageInfo (currentPage, currentIndex) {
+    let list = this.data.cachePageDataMap.get(currentPage)
+    this.handleOnePageInfo(list, currentIndex)
+  },
+
+  requestOnePageInfo (currentPage, currentIndex) {
     let that = this
     that.data.requesting = true
     Utils.request({
@@ -92,7 +98,8 @@ Page({
       size: that.data.pageSize, 
       onSuccess: function(info){
         that.data.requesting = false
-        that.handleOnePageInfo(info.questionList)
+        that.data.cachePageDataMap.set(info.currentPage, info.questionList)
+        that.handleOnePageInfo(info.questionList, currentIndex)
       },
       onFailed: function(msg) {
         that.data.requesting = false
@@ -100,37 +107,29 @@ Page({
     })
   },
 
-  loadCacheOnePageInfo (currentPage) {
-    let list = this.data.cachePageDataMap.get(currentPage)
-    this.handleOnePageInfo(list)
-  },
-
-  handleOnePageInfo (list) {
+  handleOnePageInfo (list, currentIndex) {
     let that = this
     let currentList = that.data.list
     if (list == null || list.length == 0) return 
- 
+    
     if (currentList == null || currentList.length == 0) {
       that.setData({
         list: list
       })
-      that.selectComponent("#swiper").init(that.data.currentIndex)
+      that.selectComponent("#swiper").init(currentIndex)
       return 
     }
 
     if (list[0].currentPage == currentList[0].currentPage) return
 
     // 看是需要将新的list往前插还是往后插
-    let finalList = list[0].currentPage < currentList[0].currentPage ? 
+    let resultList = list[0].currentPage < currentList[0].currentPage ? 
                   list.concat(currentList) : currentList.concat(list)
     that.setData({
-      list: finalList
+      list: resultList
     })
-    that.selectComponent("#swiper").init(that.data.currentIndex)
+    that.selectComponent("#swiper").init(currentIndex)
   },
-
-
-
 
   onClickAnswerCard: function (e) {
     let that = this
@@ -160,6 +159,7 @@ Page({
     if (that.data.currentIndex + 1 > that.data.total - 1) {
       return 
     }
+
     that.setData({
       current: that.data.currentIndex + 1
     })
@@ -171,6 +171,7 @@ Page({
   onLoad: function (options) {
     let that = this
     // 列表总长度，一定要在第一次请求列表数据前明确该值
+    // 否则无法知道下一页是否还有数据
     let total = Utils.TOTAL
     // 初始化答题卡列表
     Utils.initAnswerCardList(total)
@@ -180,8 +181,8 @@ Page({
       cachePageDataMap: new Map()
     })
 
-    // 默认值为defautIndex，比如上次答到了第几题
-    let index = parseInt(options.defaultIndex)
+    // 上次答到了第几题
+    let index = 49
     that.refresh(index)
   },
 
@@ -199,43 +200,27 @@ Page({
     // 比如一页10条，我们上次答题答到了第10题，正好在这个临界点上，我们还需要第11道题的数据
     // 那么我们需要一起请求第一页和第二页的数据
     let pageList = Utils.getInitPageList(currentIndex, pageSize, currentPage, total)
-    that.judgeInitWay(pageList)
+    that.judgeInitWay(pageList, currentIndex)
   },
 
-  judgeInitWay(pageList) {
+  judgeInitWay(pageList, currentIndex) {
     let cachePageDataMap = this.data.cachePageDataMap
-    let isNeedRequestNet = false;
+    let isNeedRequest = false;
     pageList.forEach(function(item){
       if (!cachePageDataMap.has(item)) {
-        isNeedRequestNet = true
+        isNeedRequest = true
       }
     })
 
-    if (!isNeedRequestNet) {
-      this.loadCacheInitPageInfo(pageList)
+    if (!isNeedRequest) {
+      this.loadCacheInitPageInfo(pageList, currentIndex)
       return 
     } 
 
-    this.requestInitPageInfo(pageList)
+    this.requestInitPageInfo(pageList, currentIndex)
   },
 
-  requestInitPageInfo (pageList) {
-    let that = this
-    that.data.requesting = true
-    Utils.requestMulti({
-      pageList: pageList,
-      size: that.data.pageSize,
-      onSuccess: function(results){
-        that.data.requesting = false
-        that.handleInitInfo(results)
-      },
-      onFailed: function(msg){
-        that.data.requesting = false
-      }
-    })
-  },
-
-  loadCacheInitPageInfo (pageList) {
+  loadCacheInitPageInfo (pageList, currentIndex) {
     let that = this
     let results = []
     pageList.forEach(function(item){
@@ -245,10 +230,26 @@ Page({
       results.push(info)
     })
     
-    that.handleInitInfo(results)
+    that.handleInitInfo(results, currentIndex)
   },
 
-  handleInitInfo (results) {
+  requestInitPageInfo (pageList, currentIndex) {
+    let that = this
+    that.data.requesting = true
+    Utils.requestMulti({
+      pageList: pageList,
+      size: that.data.pageSize,
+      onSuccess: function(results){
+        that.data.requesting = false
+        that.handleInitInfo(results, currentIndex)
+      },
+      onFailed: function(msg){
+        that.data.requesting = false
+      }
+    })
+  },
+
+  handleInitInfo (results, currentIndex) {
     let that = this
     let list = []
     results.forEach(function(resultItem, index){
@@ -258,7 +259,7 @@ Page({
     that.setData({
       list: list
     })
-    that.selectComponent("#swiper").init(that.data.currentIndex)
+    that.selectComponent("#swiper").init(currentIndex)
   },
 
   
