@@ -1,6 +1,6 @@
 # swiper-limited-load
 ## 一个答题小程序Demo, 包含做题页和答题卡页，并且新增了分页的demo
-### 图片经常加载不出来，可以看这两篇文章
+### 图片可能加载不出来，可看这两篇文章，有图片及对应的思路
 [csdn原文：微信小程序答题页实现——swiper渲染优化](https://blog.csdn.net/pengbo6665631/article/details/103955422)<br>
 [微信小程序交流专区：微信小程序答题页实现——swiper渲染优化](https://developers.weixin.qq.com/community/develop/article/doc/000ecafb3486f07000c92c3225c013)<br>
 ### 示例动图
