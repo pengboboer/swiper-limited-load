@@ -17,7 +17,8 @@ Page({
     let pages = getCurrentPages();
     let prevPage = pages[pages.length - 2];
     console.log(prevPage)
-    if (prevPage.route == "pages/start-swiper-limited-load/index") {
+    if (prevPage.route == "pages/start-swiper/index" 
+        || prevPage.route == "pages/start-swiper-limited-load/index") {
       prevPage.setData({
         current: e.currentTarget.dataset.index
       })
