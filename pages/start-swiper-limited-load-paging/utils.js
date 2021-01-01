@@ -6,7 +6,7 @@
 // }
 
 var TOTAL = 100
-var NET_DELAY_TIME = 1000
+var NET_DELAY_TIME = 500
 
 
 // 模拟网络请求一页数据

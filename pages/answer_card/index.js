@@ -75,7 +75,7 @@ Page({
       prevPage.setData({
         swiperDuration: "250",
       })
-    }, 1000)
+    }, 500)
    
   },
 
