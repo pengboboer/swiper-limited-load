@@ -1,5 +1,8 @@
 # swiper-limited-load
-## 一个答题小程序Demo, 包含做题页和答题卡页
+## 一个答题小程序Demo, 包含做题页和答题卡页，并且新增了分页的demo
+### 图片经常加载不出来，可以看这两篇文章
+[csdn原文：微信小程序答题页实现——swiper渲染优化](https://blog.csdn.net/pengbo6665631/article/details/103955422)<br>
+[微信小程序交流专区：微信小程序答题页实现——swiper渲染优化](https://developers.weixin.qq.com/community/develop/article/doc/000ecafb3486f07000c92c3225c013)<br>
 ### 示例动图
 <img src="https://img-blog.csdnimg.cn/20200918102227499.gif" width = "250" height = "555"/>
 这里实现了如下功能和细节：<br>
@@ -16,9 +19,7 @@
 * 在需要的页面引用此组件，并且创建自己的自定义组件item-view<br>
 * 在初始化数据时，为你的list的每一项指定index属性<br>
 * 具体可以参照项目目录start-swiper-limited-load中的用法<br>
+* 分页的demo可以参照项目目录start-swiper-limited-load-paging中的用法<br>
 * 说明：其它属性和swiper无异，你们可以自己单独添加你们需要的属性<br>
-
-[csdn原文：微信小程序答题页实现——swiper渲染优化](https://blog.csdn.net/pengbo6665631/article/details/103955422)<br>
-[微信小程序交流专区：微信小程序答题页实现——swiper渲染优化](https://developers.weixin.qq.com/community/develop/article/doc/000ecafb3486f07000c92c3225c013)<br>
 
 ### 如果对你有帮助，动动小手给个star,谢谢。
